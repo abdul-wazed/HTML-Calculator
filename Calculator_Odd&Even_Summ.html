@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odd and Even Sums Calculator</title>
+    <style>
+        /* Style of calculator box */
+        .calculator-box {
+            background-color: #f0f0f0; /* Light gray color */
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 300px;
+            margin: 0 auto;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50; /* Green button */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Input and result text styling */
+        input[type="number"] {
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="text-align: center;">Odd and Even Sums Calculator</h1>
+    
+    <!-- Calculator Box -->
+    <div class="calculator-box">
+        <label for="number">Enter a number (N): </label>
+        <input type="number" id="number" placeholder="Enter a number">
+        <button onclick="calculateSums()">Calculate Sums</button>
+        
+        <h3>Results:</h3>
+        <p id="oddSumResult"></p>
+        <p id="evenSumResult"></p>
+    </div>
+
+    <script>
+        function calculateSums() {
+            // Get the user input
+            const n = parseInt(document.getElementById('number').value);
+            const oddSumResult = document.getElementById('oddSumResult');
+            const evenSumResult = document.getElementById('evenSumResult');
+
+            // Check if N is valid
+            if (n < 1) {
+                oddSumResult.textContent = "Please enter a number greater than or equal to 1.";
+                evenSumResult.textContent = "";
+            } else {
+                let oddSum = 0;
+                let evenSum = 0;
+
+                // Loop through numbers from 1 to N
+                for (let i = 1; i <= n; i++) {
+                    if (i % 2 === 0) {
+                        evenSum += i; // Add to even sum if number is even
+                    } else {
+                        oddSum += i; // Add to odd sum if number is odd
+                    }
+                }
+
+                // Display the results
+                oddSumResult.textContent = `Sum of Odd Numbers = ${oddSum}`;
+                evenSumResult.textContent = `Sum of Even Numbers = ${evenSum}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
