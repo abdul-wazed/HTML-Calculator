@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Handler</title>
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        label, input, button {
+            display: block;
+            margin: 5px 0;
+        }
+        button {
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Analyzer</h1>
+        
+        <!-- Letter/Character Counter -->
+        <div class="section">
+            <h2>Letter/Character Counter</h2>
+            <label for="textInput">Enter a word or phrase:</label>
+            <input type="text" id="textInput" placeholder="Enter text here">
+            
+            <label for="charInput">Enter a character to count:</label>
+            <input type="text" id="charInput" maxlength="1" placeholder="Enter a character">
+            
+            <button onclick="countCharacter()">Count Character</button>
+            <p id="charCountResult"></p>
+        </div>
+        
+        <!-- Vowel Counter -->
+        <div class="section">
+            <h2>Vowel Counter</h2>
+            <label for="vowelText">Enter a word or phrase:</label>
+            <input type="text" id="vowelText" placeholder="Enter text here">
+            
+            <button onclick="countVowels()">Count Vowels</button>
+            <p id="vowelCountResult"></p>
+        </div>
+        
+        <!-- Palindrome Finder -->
+        <div class="section">
+            <h2>Palindrome Finder</h2>
+            <label for="palindromeText">Enter a word or phrase:</label>
+            <input type="text" id="palindromeText" placeholder="Enter text here">
+            
+            <button onclick="checkPalindrome()">Check Palindrome</button>
+            <p id="palindromeResult"></p>
+        </div>
+    </div>
+
+    <script>
+        // Character Counter Function
+        function countCharacter() {
+            let text = document.getElementById("textInput").value;
+            let character = document.getElementById("charInput").value;
+            let count = 0;
+
+            for (let char of text) {
+                if (char.toLowerCase() === character.toLowerCase()) {
+                    count++;
+                }
+            }
+
+            document.getElementById("charCountResult").innerText = 
+                `${text} contains ${count} "${character}" characters.`;
+        }
+
+        // Vowel Counter Function
+        function countVowels() {
+            let text = document.getElementById("vowelText").value;
+            let vowels = "aeiouyAEIOUY";
+            let count = 0;
+
+            for (let char of text) {
+                if (vowels.includes(char)) {
+                    count++;
+                }
+            }
+
+            document.getElementById("vowelCountResult").innerText = 
+                `${text} contains ${count} vowels.`;
+        }
+
+        // Palindrome Checker Function
+        function checkPalindrome() {
+            let text = document.getElementById("palindromeText").value;
+            let cleanedText = text.replace(/[^a-zA-Z]/g, '').toLowerCase();
+            let reversedText = cleanedText.split('').reverse().join('');
+            
+            if (cleanedText === reversedText) {
+                document.getElementById("palindromeResult").innerText = 
+                    `${text} is a palindrome.`;
+            } else {
+                document.getElementById("palindromeResult").innerText = 
+                    `${text} is NOT a palindrome.`;
+            }
+        }
+    </script>
+</body>
+</html>
