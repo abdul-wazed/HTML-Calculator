@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Map Search</title>
+    <style>
+        .search-box {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        label, input, button {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Google Map Search</h1>
+    
+    <div class="search-box">
+        <label for="street">Street:</label>
+        <input type="text" id="street" placeholder="Enter street name">
+        <br><br>
+        <label for="city">City:</label>
+        <input type="text" id="city" placeholder="Enter city name">
+        <br><br>
+        <button onclick="searchLocation()">Search</button>
+    </div>
+    
+    <br><br>
+    <iframe id="mapFrame" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
+    <script>
+        function searchLocation() {
+            var street = document.getElementById("street").value;
+            var city = document.getElementById("city").value;
+            var mapFrame = document.getElementById("mapFrame");
+            
+            var location = street + ", " + city;
+            mapFrame.src = "https://www.google.com/maps?q=" + encodeURIComponent(location) + "&output=embed";
+        }
+    </script>
+</body>
+</html>
