@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finnish ID Code Generator & Validator</title>
+    <style>
+        body {
+            font-family: Cambria, sans-serif;
+            background-color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: skyblue;
+            max-width: 500px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: calc(100% - 20px);
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 17px;
+        }
+        button:hover {
+            background-color: #005f99;
+        }
+        #result, #validationResult {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Finnish ID Code Generator & Validator</h1>
+    <div class="container">
+        <h2>Generate Finnish ID Number</h2>
+        <form id="generateForm">
+            <label for="dd">Day of Birth:</label>
+            <select id="dd" required>
+                <option value="">DD</option>
+            </select>
+            <label for="mm">Month of Birth:</label>
+            <select id="mm" required>
+                <option value="">MM</option>
+            </select>
+            <label for="yyyy">Year of Birth:</label>
+            <input type="number" id="yyyy" placeholder="YYYY" min="1800" max="2099" required>
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+            <button type="button" onclick="generateID()">Generate Finnish ID Number</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <div class="container">
+        <h2>Validate Finnish ID Number</h2>
+        <form id="validateForm">
+            <input type="text" id="idInput" placeholder="Enter Finnish ID Code" required>
+            <button type="button" onclick="validateID()">Validate Finnish ID Number</button>
+        </form>
+        <div id="validationResult"></div>
+    </div>
+
+    <script>
+        // Generate date and month dropdowns
+        const dayDropdown = document.getElementById('dd');
+        const monthDropdown = document.getElementById('mm');
+        for (let i = 1; i <= 31; i++) {
+            dayDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+        }
+        for (let i = 1; i <= 12; i++) {
+            monthDropdown.innerHTML += `<option value="${i}">${i}</option>`;
+        }
+
+        // Function to validate a date
+        function isValidDate(dd, mm, yyyy) {
+            const date = new Date(yyyy, mm - 1, dd); // JavaScript Date uses 0-based months
+            return date.getDate() === parseInt(dd) && 
+                   date.getMonth() === mm - 1 && 
+                   date.getFullYear() === parseInt(yyyy);
+        }
+
+        function generateID() {
+            const dd = document.getElementById('dd').value.padStart(2, '0');
+            const mm = document.getElementById('mm').value.padStart(2, '0');
+            const yyyy = document.getElementById('yyyy').value;
+            const gender = document.getElementById('gender').value;
+
+            if (!dd || !mm || !yyyy || !gender) {
+                document.getElementById('result').innerText = 'Please fill all fields.';
+                return;
+            }
+
+            if (!isValidDate(dd, mm, yyyy)) {
+                document.getElementById('result').innerText = 'Invalid date. Please select a valid calendar date.';
+                return;
+            }
+
+            const centurySign = yyyy >= 2000 ? 'A' : yyyy >= 1900 ? '-' : '+';
+            const individualNumber = Math.floor(Math.random() * 899) + 100;
+            const genderNumber = gender === 'female' ? individualNumber % 2 === 0 : individualNumber % 2 !== 0;
+            const fullNumber = `${dd}${mm}${yyyy.slice(-2)}${centurySign}${genderNumber ? individualNumber : individualNumber + 1}`;
+            const checksum = '0123456789ABCDEFHJKLMNPRSTUVWXY'.charAt(
+                parseInt(fullNumber.replace(centurySign, ''), 10) % 31
+            );
+            document.getElementById('result').innerText = `Generated ID Code: ${fullNumber}${checksum}`;
+        }
+
+        function validateID() {
+            const id = document.getElementById('idInput').value.trim();
+            if (!id) {
+                document.getElementById('validationResult').innerText = 'Please enter an ID code.';
+                return;
+            }
+
+            const regex = /^(\d{6})([+\-A])(\d{3})([0-9A-Z])$/;
+            const match = id.match(regex);
+            if (!match) {
+                document.getElementById('validationResult').innerText = 'Invalid ID format.';
+                return;
+            }
+
+            const [_, datePart, centurySign, individualNumber, checksum] = match;
+            const dd = parseInt(datePart.slice(0, 2), 10);
+            const mm = parseInt(datePart.slice(2, 4), 10);
+            const yy = parseInt(datePart.slice(4, 6), 10);
+            const year = centurySign === 'A' ? 2000 + yy : centurySign === '-' ? 1900 + yy : 1800 + yy;
+
+            if (!isValidDate(dd, mm, year)) {
+                document.getElementById('validationResult').innerText = 'Invalid date in ID.';
+                return;
+            }
+
+            const gender = individualNumber % 2 === 0 ? 'Female' : 'Male';
+            const validChecksum = '0123456789ABCDEFHJKLMNPRSTUVWXY'.charAt(
+                parseInt(datePart + individualNumber, 10) % 31
+            );
+
+            if (validChecksum !== checksum) {
+                document.getElementById('validationResult').innerText = 'Invalid checksum in ID.';
+                return;
+            }
+
+            const now = new Date();
+            const birthDate = new Date(year, mm - 1, dd);
+            const ageYears = now.getFullYear() - year;
+            const ageMonths = now.getMonth() - birthDate.getMonth() + (now.getDate() < dd ? -1 : 0);
+            const ageDays = now.getDate() - dd + (now.getDate() < dd ? new Date(year, mm, 0).getDate() : 0);
+
+            document.getElementById('validationResult').innerHTML = `
+                ✅ Valid ID!<br>
+                Gender: ${gender}<br>
+                Century: ${centurySign === 'A' ? '2000s' : centurySign === '-' ? '1900s' : '1800s'}<br>
+                Full Age: ${ageYears} years, ${Math.abs(ageMonths)} months, ${Math.abs(ageDays)} days.
+            `;
+        }
+    </script>
+</body>
+</html>
